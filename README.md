@@ -1,7 +1,7 @@
 # python_scripts
 Small programs I made in my free time
 
-find_words.py:
+find_words.py:\n
   Enter a string a letters and a wordlist (dict.txt, included) and it will generate a list of words that can be made using those letters
   
 longest_alphabetical_letters.py:
