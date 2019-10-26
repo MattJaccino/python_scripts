@@ -2,6 +2,7 @@ import time
 
 
 def remove_spaces(letters):
+    # Remove spaces from the input if they exist
     clean=""
     for i in range(len(letters)):
         if letters[i] != " ":
@@ -31,16 +32,13 @@ def print_list(list):
 	return str[:-2]
 
 
-def find_a_word(letters, dict):                                 # Works
+def find_a_word(letters, dict):                                 
     print("Looking for a word with '", letters, "'", sep='')
     dict.seek(0)
     valid = []
     for word in dict:
         word = word[:-1]
-        # print(word)
-        #time.sleep(1)
         if sorted(letters) == sorted(word):
-            # print("DING")
             valid.append(word)
     return valid
 
@@ -54,19 +52,14 @@ def find_words(letters, dict):
     return find_words_help(clean, dict, valid, end_num)
 
 
-def find_words_help(letters, dict, words, goal_num, building=""):           # Only does 1 sweep
-    # print("letters: ",letters, "building: ", building)
+def find_words_help(letters, dict, words, goal_num, building=""):           
     if len(remove_spaces(building)) == goal_num:
-        # print("DING")
         words.append(building[:-1])
 
     dict.seek(0)
-    # print("i: ", i, "chunk: ", letters[:i+1])
     for word in dict:
-        # print("word: ", word)
         word = word[:-1]
         if word in letters and (len(word) > 1 || word == "I" || word == "a"):
-            # print("found a start with", word)
             find_words_help(str_sub(letters, word), dict, words, goal_num, building + word + " ")
     return words
 
@@ -85,7 +78,6 @@ def main():
         return -1
     if ' ' in letters_to_use:
         print("Spaces should not be included at this time.")
-        # print(find_words(letters_to_use, my_dict))
     else:
         print("The words that can be made from ", letters_to_use, " are: ", print_list(find_a_word(remove_spaces(letters_to_use), my_dict)), ".", sep='')
     my_dict.close()
