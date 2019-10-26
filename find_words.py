@@ -59,7 +59,7 @@ def find_words_help(letters, dict, words, goal_num, building=""):
     dict.seek(0)
     for word in dict:
         word = word[:-1]
-        if word in letters and (len(word) > 1 || word == "I" || word == "a"):
+        if word in letters and (len(word) > 1 or word == "I" or word == "a"):
             find_words_help(str_sub(letters, word), dict, words, goal_num, building + word + " ")
     return words
 
