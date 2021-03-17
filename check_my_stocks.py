@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 class stock:
+    """ Simple stock object to hold data for quick referencing """
     def __init__(self, ticker, buy_price, q):
         self.name = ticker
         self.q = q
@@ -16,7 +17,7 @@ class stock:
         self.cval = self.q * self.cp
         self.netval = net(self.bval, self.cval)
     def output_str(self):
-        # For individual stock changes, not entire purchase
+        # String that will be printed
         return f"{self.name}\t\t"\
                f"{self.q}\t\t"\
                f"{self.bp} ({self.bval:.2f})\t\t"\
@@ -25,10 +26,12 @@ class stock:
 
 
 def net(buy, curr):
+    """ Just to prepend a '+' if the change is net positive """
     return f"{curr-buy:.2f}" if curr-buy < 0 else "+"+f"{curr-buy:.2f}"
 
 
 def check_ticker(ticker):
+    """ Verify ticker is valid """
     try:
         stock_info.get_data(ticker)
         valid = True
@@ -38,6 +41,7 @@ def check_ticker(ticker):
 
 
 def check_price(price):
+    """ Verify price is valid """
     try:
         float(price)
         valid = True
@@ -47,6 +51,7 @@ def check_price(price):
 
 
 def check_quan(q):
+    """ Verify quantity is valid """
     try:
         int(q)
         valid = True
@@ -56,6 +61,7 @@ def check_quan(q):
 
 
 def make_list():
+    """ Keep list of truples: ([TICKER], [PRICE WHEN BOUGHT], [QUANTITY BOUGHT]) """
     stock_list = []
     uin = input("Enter the ticker of the stock you purchased, or press ENTER to continue.\n")
     while uin:
@@ -110,8 +116,6 @@ def ask_for_updates():
 
 
 
-# Keep list as truple of ([TICKER], [PRICE WHEN BOUGHT], [QUANTITY BOUGHT])
-
 
 
 def main():   
@@ -150,8 +154,6 @@ def main():
     # Create objects for each stock to hold info
     for s in stock_list:
         sd[s] = stock(s[0], s[1], s[2])
-
-
 
     output = "Stock\t\tQuantity\tBought\t\t\tCurrent\t\t\tNet\n"
     now = datetime.today().strftime("%m/%d/%y  %H:%M")
