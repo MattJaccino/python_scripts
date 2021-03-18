@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
 import os
+import argparse
 from yahoo_fin import stock_info
 from datetime import datetime
 
 
 class stock:
-    """ Simple stock object to hold data for quick referencing """
     def __init__(self, ticker, buy_price, q):
         self.name = ticker
         self.q = q
@@ -17,7 +17,7 @@ class stock:
         self.cval = self.q * self.cp
         self.netval = net(self.bval, self.cval)
     def output_str(self):
-        # String that will be printed
+        # For individual stock changes, not entire purchase
         return f"{self.name}\t\t"\
                f"{self.q}\t\t"\
                f"{self.bp} ({self.bval:.2f})\t\t"\
@@ -26,12 +26,10 @@ class stock:
 
 
 def net(buy, curr):
-    """ Just to prepend a '+' if the change is net positive """
     return f"{curr-buy:.2f}" if curr-buy < 0 else "+"+f"{curr-buy:.2f}"
 
 
 def check_ticker(ticker):
-    """ Verify ticker is valid """
     try:
         stock_info.get_data(ticker)
         valid = True
@@ -41,7 +39,6 @@ def check_ticker(ticker):
 
 
 def check_price(price):
-    """ Verify price is valid """
     try:
         float(price)
         valid = True
@@ -51,7 +48,6 @@ def check_price(price):
 
 
 def check_quan(q):
-    """ Verify quantity is valid """
     try:
         int(q)
         valid = True
@@ -61,7 +57,7 @@ def check_quan(q):
 
 
 def make_list():
-    """ Keep list of truples: ([TICKER], [PRICE WHEN BOUGHT], [QUANTITY BOUGHT]) """
+    # Keep list as truple of ([TICKER], [PRICE WHEN BOUGHT], [QUANTITY BOUGHT])
     stock_list = []
     uin = input("Enter the ticker of the stock you purchased, or press ENTER to continue.\n")
     while uin:
@@ -109,29 +105,40 @@ def ask_for_updates():
     # Essentially its asking 'Do you want to add to the data?'
     return False if uin == '1' else True
 
+def read_stock_doc():
+    stock_list = []
+    stock_doc_r = open("./stocks.csv", "r")
+    for line in stock_doc_r:
+        t,p,q = line.split(',')
+        ticker = t[2:-1]
+        bp = p[1:]
+        quan = q[1:-2]
+        stock_list.append((ticker, float(bp), int(quan)))
+    stock_doc_r.close()
+    return stock_list
 
 
 #*****************************************************************************
 
-
-
-
-
-
-def main():   
+def main():
+    """ Check for '--as-is' arg and run stock data generation """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--as-is',
+                        dest='as_is',
+                        action='store_const',
+                        const=True,
+                        default=False,
+                        help="use 'stocks.csv' file data without prompting user for changes")
+    args=parser.parse_args()
     # Check if data is already stored
     if os.path.isfile("./stocks.csv"):
-        if ask_for_changes():
+        # Shortcut for argument
+        if args.as_is: 
             use_new = False
-            stock_list = []
-            stock_doc_r = open("./stocks.csv", "r")
-            for line in stock_doc_r:
-                t,p,q = line.split(',')
-                ticker = t[2:-1]
-                bp = p[1:]
-                quan = q[1:-2]
-                stock_list.append((ticker, float(bp), int(quan)))
-            stock_doc_r.close()
+            stock_list = read_stock_doc()
+        elif ask_for_changes():
+            use_new = False
+            stock_list = read_stock_doc()
             if ask_for_updates():
                 stock_doc_a = open("./stocks.csv", "a")
                 new_stock_list = make_list()
@@ -150,10 +157,13 @@ def main():
         for s in stock_list:
             stock_doc.write(str(s)+'\n')
         stock_doc.close()
+
     sd = {} # Stock dict
     # Create objects for each stock to hold info
     for s in stock_list:
         sd[s] = stock(s[0], s[1], s[2])
+
+
 
     output = "Stock\t\tQuantity\tBought\t\t\tCurrent\t\t\tNet\n"
     now = datetime.today().strftime("%m/%d/%y  %H:%M")
@@ -171,5 +181,6 @@ def main():
     totals = f"TOTAL BUY VALUE: {tbv:.2f}\tTOTAL CURRENT VALUE: {tcv:.2f}\tTOTAL NET CHANGE: {net(tbv, tcv)}\n"
     print(totals)
 
-main()
+if __name__ == '__main__':
+    main()
 
