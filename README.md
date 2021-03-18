@@ -12,3 +12,6 @@ Small programs I made in my free time
   
 <strong>word_freq_ranker.py:</strong><br>
   Given a text file, this program will print to console the top 3 most frequent words in the document as well as create a new text file with the rankings of all words in the document.  I used this to find the frequencies of words in song lyrics.
+
+<strong>check_my_stocks.py:</strong><br>
+  Running this program will prompt the user for their stock purchases, including the ticker, price bought at, and quantity purchased.  All given data is stored in a file named 'stocks.csv' which the user can update upon subsequent runs.  The data is used to generate the change in value and net gain/loss of the stored stock portfolio with real time prices.
